@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ConsoleTest
 {
@@ -9,20 +10,20 @@ namespace ConsoleTest
             var errorMessage = "\"{0}\"は数字ではありません。\r\n数字を入れてください。";
 
             Console.WriteLine("貴方の年齢は何歳？");
-            var age = ReadValue<int>(int.TryParse, errorMessage);
+            var age = ReadValue<int>(int.TryParse, errorMessage).Result;
 
             Console.WriteLine("あなたの身長は何cm？");
-            var height = ReadValue<int>(int.TryParse, errorMessage);
+            var height = ReadValue<int>(int.TryParse, errorMessage).Result;
 
             Console.WriteLine($"あなたの年齢は{age}歳、身長は{height}cmです。");
             Console.ReadLine();
         }
 
-        private static T ReadValue<T>(TryConvert<T> converter, string errorMessage)
+        private static async Task<T> ReadValue<T>(TryConvert<T> converter, string errorMessage)
         {
             while (true)
             {
-                var line = Console.ReadLine();
+                var line = await Console.In.ReadLineAsync();
                 if (converter(line, out T res)) return res;
 
                 Console.WriteLine(errorMessage, line);
